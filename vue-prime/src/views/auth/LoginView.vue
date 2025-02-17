@@ -1,9 +1,33 @@
 <script setup>
-import { ref } from "vue";
+import { Form } from "@primevue/forms";
+import { useToast } from "primevue/usetoast";
+import { useRouter } from "vue-router";
+import { useAuthStore } from "@/stores/auth";
+import { zodResolver } from "@primevue/forms/resolvers/zod";
+import { z } from "zod";
+import { reactive } from "vue";
 
-const email = ref("");
-const password = ref("");
-const checked = ref(false);
+const auth = useAuthStore();
+const router = useRouter();
+const toast = useToast();
+
+const initialValues = reactive({
+  email: "",
+  password: "",
+});
+
+const resolver = zodResolver(
+  z.object({
+    email: z.string().min(1, { message: "Email is required." }).email(),
+    password: z.string().min(6, { message: "Password is required." }),
+  })
+);
+
+const onFormSubmit = (e) => {
+  console.log("submit");
+
+  console.log(e.states.email.value);
+};
 </script>
 
 <template>
@@ -71,55 +95,70 @@ const checked = ref(false);
           </div>
 
           <div>
-            <label
-              for="email1"
-              class="block text-surface-900 dark:text-surface-0 text-xl font-medium mb-2"
-              >Email</label
+            <Form
+              v-slot="$form"
+              @submit="onFormSubmit"
+              :resolver
+              :initialValues
             >
-            <InputText
-              id="email1"
-              type="text"
-              placeholder="Email address"
-              class="w-full md:w-[30rem] mb-8"
-              v-model="email"
-            />
-
-            <label
-              for="password1"
-              class="block text-surface-900 dark:text-surface-0 font-medium text-xl mb-2"
-              >Password</label
-            >
-            <Password
-              id="password1"
-              v-model="password"
-              placeholder="Password"
-              :toggleMask="true"
-              class="mb-4"
-              fluid
-              :feedback="false"
-            ></Password>
-
-            <div class="flex items-center justify-between mt-2 mb-8 gap-8">
-              <div class="flex items-center">
-                <Checkbox
-                  v-model="checked"
-                  id="rememberme1"
-                  binary
-                  class="mr-2"
-                ></Checkbox>
-                <label for="rememberme1">Remember me</label>
-              </div>
-              <span
-                class="font-medium no-underline ml-2 text-right cursor-pointer text-primary"
-                >Forgot password?</span
+              <label
+                for="email"
+                class="block text-surface-900 dark:text-surface-0 text-xl font-medium mb-2"
+                >Email</label
               >
-            </div>
-            <Button
-              label="Sign In"
-              class="w-full"
-              as="router-link"
-              to="/"
-            ></Button>
+              <InputText
+                name="email"
+                id="email"
+                type="email"
+                placeholder="Email address"
+                class="w-full md:w-[30rem] mb-8"
+              />
+              <Message
+                v-if="$form.email?.invalid"
+                severity="error"
+                size="small"
+                variant="simple"
+                >{{ $form.email.error.message }}</Message
+              >
+
+              <label
+                for="password"
+                class="block text-surface-900 dark:text-surface-0 font-medium text-xl mb-2"
+                >Password</label
+              >
+              <Password
+                name="password"
+                id="password"
+                placeholder="Password"
+                :toggleMask="true"
+                class="mb-4"
+                fluid
+                :feedback="false"
+              ></Password>
+              <Message
+                v-if="$form.password?.invalid"
+                severity="error"
+                size="small"
+                variant="simple"
+                >{{ $form.password.error.message }}</Message
+              >
+              <!-- <div class="flex items-center justify-between mt-2 mb-8 gap-8">
+                <div class="flex items-center">
+                  <Checkbox
+                    v-model="checked"
+                    id="rememberme1"
+                    binary
+                    class="mr-2"
+                  ></Checkbox>
+                  <label for="rememberme1">Remember me</label>
+                </div>
+                <span
+                  class="font-medium no-underline ml-2 text-right cursor-pointer text-primary"
+                  >Forgot password?</span
+                >
+              </div> -->
+              <Button label="Login" class="w-full" type="submit" />
+            </Form>
           </div>
         </div>
       </div>

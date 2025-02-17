@@ -3,16 +3,20 @@ import "@/assets/tailwind.css";
 
 import { createApp } from "vue";
 import { createPinia } from "pinia";
+import piniaPluginPersistedstate from "pinia-plugin-persistedstate";
 
 import PrimeVue from "primevue/config";
 import Aura from "@primevue/themes/aura";
+import ToastService from "primevue/toastservice";
 
 import App from "./App.vue";
 import router from "./router";
 
 const app = createApp(App);
 
-app.use(createPinia());
+const pinia = createPinia();
+app.use(pinia);
+pinia.use(piniaPluginPersistedstate);
 app.use(router);
 
 app.use(PrimeVue, {
@@ -23,5 +27,7 @@ app.use(PrimeVue, {
     },
   },
 });
+
+app.use(ToastService);
 
 app.mount("#app");

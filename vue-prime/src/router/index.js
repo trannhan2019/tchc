@@ -1,5 +1,7 @@
 import { createRouter, createWebHistory } from "vue-router";
 import MainLayout from "@/layouts/main/MainLayout.vue";
+import { useAuthStore } from "@/stores/auth";
+import NotFound from "@/views/errors/NotFound.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -14,7 +16,8 @@ const router = createRouter({
       path: "/",
       name: "main.layout",
       component: MainLayout,
-      title: "Main Layout",
+      meta: { requiresAuth: true, title: "Main Layout" },
+
       redirect: { name: "dashboard" },
       children: [
         {
@@ -34,6 +37,16 @@ const router = createRouter({
       // which is lazy-loaded when the route is visited.
       component: () => import("../views/AboutView.vue"),
     },
+    {
+      path: "/not-found",
+      name: "not.found",
+      component: NotFound,
+      meta: {
+        title: "Not Found",
+        isRequiredAuth: false,
+      },
+    },
+    { path: "/:pathMatch(.*)*", redirect: { name: "not.found" } },
   ],
 });
 
@@ -41,10 +54,8 @@ const router = createRouter({
 router.beforeEach((to, from, next) => {
   document.title = to.meta.title ? `${to.meta.title} | MyApp` : "MyApp";
 
-  const user = {
-    role: "admin",
-    name: "John Doe",
-  }; // Lấy thông tin user
+  const auth = useAuthStore();
+  const user = auth.user;
 
   if (to.meta.requiresAuth === false) {
     // Nếu không yêu cầu đăng nhập mà user đã login → chuyển đến dashboard
