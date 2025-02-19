@@ -32,6 +32,7 @@ axios.interceptors.response.use(
         NProgress.done();
         return Promise.reject(error);
     }
+    NProgress.done();
   }
 );
 

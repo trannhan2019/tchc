@@ -1,0 +1,52 @@
+[
+    {
+        "ten_phong_ban": "Hội đồng quản trị",
+        "ma_phong_ban": "HĐQT",
+        "thu_tu_sap_xep": 1
+    },
+    {
+        "ten_phong_ban": "Ban Kiểm soát",
+        "ma_phong_ban": "BKS",
+        "thu_tu_sap_xep": 2
+    },
+    {
+        "ten_phong_ban": "Ban Tổng giám đốc và Kế toán trưởng",
+        "ma_phong_ban": "BTGĐ&KTT",
+        "thu_tu_sap_xep": 3
+    },
+    {
+        "ten_phong_ban": "Phòng Tổ chức - Hành chính",
+        "ma_phong_ban": "TCHC",
+        "thu_tu_sap_xep": 4
+    },
+    {
+        "ten_phong_ban": "Phòng Tài Chính - Kế Toán",
+        "ma_phong_ban": "TCKT",
+        "thu_tu_sap_xep": 5
+    },
+    {
+        "ten_phong_ban": "Phòng Kinh Tế - Kế Hoạch",
+        "ma_phong_ban": "KTKH",
+        "thu_tu_sap_xep": 6
+    },
+    {
+        "ten_phong_ban": "Phòng Kỹ thuật Cơ điện",
+        "ma_phong_ban": "KTCĐ",
+        "thu_tu_sap_xep": 7
+    },
+    {
+        "ten_phong_ban": "TTTV&KĐ an toàn đập",
+        "ma_phong_ban": "TTTV",
+        "thu_tu_sap_xep": 8
+    },
+    {
+        "ten_phong_ban": "Nhà máy thủy điện Khe Diên",
+        "ma_phong_ban": "NMKD",
+        "thu_tu_sap_xep": 9
+    },
+    {
+        "ten_phong_ban": "Nhà máy thủy điện Krông H'Năng",
+        "ma_phong_ban": "NMKN",
+        "thu_tu_sap_xep": 10
+    }
+]
