@@ -11,9 +11,10 @@ class PhongBanController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $phongBans = PhongBan::all();
+        $search = $request->input('search');
+        $phongBans = PhongBan::where('ten_phong_ban', 'like', '%' . $search . '%')->orWhere('ma_phong_ban', 'like', '%' . $search . '%')->orderBy('thu_tu_sap_xep')->get();
         return PhongBanResource::collection($phongBans);
     }
 
