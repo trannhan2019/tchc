@@ -5,7 +5,7 @@ import { useQueryParams } from "@/hooks/use-query-params";
 import { useForm } from "react-hook-form";
 import { Form, FormField } from "./ui/form";
 
-export function SearchForm({ setOpen }) {
+export function SearchForm({ setOpen, setType }) {
   const { queryObject, updateQueryParams } = useQueryParams();
 
   const form = useForm({
@@ -23,6 +23,11 @@ export function SearchForm({ setOpen }) {
 
   const onSubmit = (value) => {
     updateQueryParams({ ...queryObject, page: "1", search: value.search });
+  };
+
+  const handleOpenAdd = () => {
+    setOpen(true);
+    setType("add");
   };
 
   return (
@@ -66,7 +71,7 @@ export function SearchForm({ setOpen }) {
         </Form>
       </div>
       <div>
-        <Button className="cursor-pointer" onClick={() => setOpen(true)}>
+        <Button className="cursor-pointer" onClick={() => handleOpenAdd()}>
           <Plus /> Thêm mới
         </Button>
       </div>

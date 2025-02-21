@@ -26,17 +26,26 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { useQueryParams } from "@/hooks/use-query-params";
+import { Loading } from "@/components/loading";
 
-export function DanhSachPhongBan() {
+export function DanhSachPhongBan({ setOpen, setPhongBan, setType }) {
   const { queryObject } = useQueryParams();
   const search = queryObject.search || null;
 
-  const { data: dsPhongBan, isError } = useQuery({
+  const {
+    data: dsPhongBan,
+    isError,
+    isLoading,
+  } = useQuery({
     queryKey: ["phong-ban", search],
     queryFn: () => getManyPhongBan({ search }),
     placeholderData: keepPreviousData,
     retry: false,
   });
+
+  if (isLoading) {
+    return <Loading />;
+  }
 
   if (isError) {
     return (
@@ -53,6 +62,12 @@ export function DanhSachPhongBan() {
     );
   }
 
+  const handleOpenEdit = (value) => {
+    setOpen(true);
+    setType("edit");
+    setPhongBan(value);
+  };
+
   return (
     <Table>
       <TableHeader>
@@ -64,7 +79,7 @@ export function DanhSachPhongBan() {
               /> */}
           </TableHead>
           <TableHead className="w-5">STT</TableHead>
-          <TableHead className="w-[80%]">Tên phòng ban</TableHead>
+          <TableHead className="w-[50%] lg:w-[70%]">Tên phòng ban</TableHead>
           <TableHead>Tên viết tắt</TableHead>
           <TableHead>Trạng thái</TableHead>
           <TableHead>Hành động</TableHead>
@@ -108,7 +123,7 @@ export function DanhSachPhongBan() {
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent>
-                    <DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => handleOpenEdit(item)}>
                       <Pencil />
                       <span className="ml-4 text-sm">Sửa</span>
                     </DropdownMenuItem>

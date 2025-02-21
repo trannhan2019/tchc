@@ -25,11 +25,13 @@ axios.interceptors.response.use(
       case 401:
         window.location.href = "/login";
         break;
-      case 403:
-        window.location.href = "/no-access";
+        // case 403:
+        //   window.location.href = "/no-access";
         break;
       default:
         NProgress.done();
+        console.log(error);
+
         return Promise.reject(error);
     }
     NProgress.done();

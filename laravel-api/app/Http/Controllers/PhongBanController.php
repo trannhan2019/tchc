@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\PhongBan\StoreRequest;
 use App\Http\Resources\PhongBanResource;
 use App\Models\PhongBan;
 use Illuminate\Http\Request;
@@ -29,9 +30,12 @@ class PhongBanController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StoreRequest $request)
     {
-        //
+        PhongBan::create($request->validated());
+        return response()->json([
+            'message' => 'Thêm mới phòng ban thành công'
+        ]);
     }
 
     /**

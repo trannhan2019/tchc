@@ -11,9 +11,9 @@ export const themPhongBan = async (phongBan) => {
   return axios.post(phongBanApiUrl, phongBan);
 };
 
-export const updateCongty = async (congty, id) => {
+export const suaPhongBan = async (phongBan, id) => {
   await csrf();
-  return axios.put(`${phongBanApiUrl}/${id}`, congty);
+  return axios.put(`${phongBanApiUrl}/${id}`, phongBan);
 };
 
 export const deleteCongty = async (id) => {

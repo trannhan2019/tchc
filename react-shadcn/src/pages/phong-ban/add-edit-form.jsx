@@ -1,7 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
-import { toast } from "sonner";
-import { PlusIcon } from "lucide-react";
+
 import {
   DialogClose,
   DialogContent,
@@ -10,7 +9,6 @@ import {
   DialogHeader,
   DialogTitle,
   Dialog,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -22,64 +20,78 @@ import {
   FormLabel,
 } from "@/components/ui/form";
 import { useForm } from "react-hook-form";
-import { Textarea } from "@/components/ui/textarea";
 import { Loader2 } from "lucide-react";
 import { z } from "zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { themPhongBan } from "@/apis/phong-ban";
+import { themPhongBan, suaPhongBan } from "@/apis/phong-ban";
+import toast from "react-hot-toast";
+import { useEffect } from "react";
 
 const initialState = {
   ten_phong_ban: "",
   ma_phong_ban: "",
-  thu_tu_sap_xep: 0,
+  thu_tu_sap_xep: "1",
   trang_thai: true,
 };
 
 const schema = z.object({
-  ten: z.string().min(1),
-  ten_viet_tat: z.string().optional(),
-  dia_chi: z.string().min(5),
-  sdt: z.string().optional(),
+  ten_phong_ban: z.string().min(1),
+  ma_phong_ban: z.string().min(1),
+  thu_tu_sap_xep: z.string(),
   trang_thai: z.boolean(),
 });
 
-export default function AddForm({ open, setOpen }) {
+export function AddEditForm({ open, setOpen, type, setType, phongBan }) {
   const queryClient = useQueryClient();
 
-  const form =
-    useForm <
-    CongTyRequest >
-    {
-      resolver: zodResolver(schema),
-      defaultValues: initialState,
-    };
+  useEffect(() => {
+    if (type === "edit") {
+      form.setValue("ten_phong_ban", phongBan.ten_phong_ban);
+      form.setValue("ma_phong_ban", phongBan.ma_phong_ban);
+      form.setValue("thu_tu_sap_xep", phongBan.thu_tu_sap_xep);
+      form.setValue("trang_thai", phongBan.trang_thai);
+    } else {
+      form.reset();
+    }
+  }, [phongBan, type]);
 
-  const { mutate, isPending } = useMutation({
-    mutationFn: (phongBan) => themPhongBan(phongBan),
+  const form = useForm({
+    defaultValues: initialState,
+    resolver: zodResolver(schema),
   });
 
-  const onSubmit = async (values: CongTyRequest) => {
+  // const { mutate, isPending } = useMutation({
+  //   mutationFn: (values) => themPhongBan(values),
+  // });
+
+  const { mutate, isPending } = useMutation({
+    mutationFn: (values) =>
+      type === "add" ? themPhongBan(values) : suaPhongBan(values, phongBan.id),
+  });
+
+  const onSubmit = async (values) => {
+    // console.log(values);
+
     mutate(values, {
       onSuccess: () => {
-        toast.success("Thêm công ty thành công");
         form.reset();
         setOpen(false);
-        queryClient.invalidateQueries({ queryKey: ["congties"] });
+
+        toast.success("Lưu phòng ban thành công !");
+        queryClient.invalidateQueries({ queryKey: ["phong-ban"] });
       },
-      onError: () => {
-        toast.error("Thêm công ty thất bại");
+      onError: (error) => {
+        if (error.response.status === 422) {
+          toast.error("Mã phòng ban đã tồn tại !");
+        } else {
+          toast.error("Thêm phòng ban thất bại !");
+        }
       },
     });
   };
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button className="bg-gradient-to-r from-cyan-500 to-blue-500 text-white hover:from-cyan-600 hover:to-blue-600">
-          <PlusIcon className="h-4 w-4" />
-          <span>Thêm</span>
-        </Button>
-      </DialogTrigger>
       <DialogContent
         onInteractOutside={(e) => {
           e.preventDefault();
@@ -88,17 +100,17 @@ export default function AddForm({ open, setOpen }) {
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)}>
             <DialogHeader>
-              <DialogTitle>Thêm công ty</DialogTitle>
+              <DialogTitle>Thêm Phòng Ban</DialogTitle>
               <DialogDescription></DialogDescription>
               <div className="grid gap-4 py-4">
                 <FormField
                   control={form.control}
-                  name="ten"
+                  name="ten_phong_ban"
                   render={({ field }) => (
                     <FormItem>
-                      <div className="grid grid-cols-4 items-center gap-x-4">
+                      <div className="grid grid-cols-4 items-center gap-x-3">
                         <FormLabel className="text-right">
-                          Tên Công ty <span className="text-red-500">*</span>
+                          Tên Phòng Ban <span className="text-red-500">*</span>
                         </FormLabel>
                         <FormControl>
                           <Input {...field} className="col-span-3" />
@@ -110,12 +122,12 @@ export default function AddForm({ open, setOpen }) {
 
                 <FormField
                   control={form.control}
-                  name="ten_viet_tat"
+                  name="ma_phong_ban"
                   render={({ field }) => (
                     <FormItem>
-                      <div className="grid grid-cols-4 items-center gap-4">
+                      <div className="grid grid-cols-4 items-center gap-x-3">
                         <FormLabel className="text-right">
-                          Tên viết tắt
+                          Tên viết tắt <span className="text-red-500">*</span>
                         </FormLabel>
                         <FormControl>
                           <Input {...field} className="col-span-3" />
@@ -127,32 +139,19 @@ export default function AddForm({ open, setOpen }) {
 
                 <FormField
                   control={form.control}
-                  name="dia_chi"
+                  name="thu_tu_sap_xep"
                   render={({ field }) => (
                     <FormItem>
-                      <div className="grid grid-cols-4 items-center gap-4">
+                      <div className="grid grid-cols-4 items-center gap-x-3">
                         <FormLabel className="text-right">
-                          Địa chỉ <span className="text-red-500">*</span>
+                          Thứ tự sắp xếp <span className="text-red-500">*</span>
                         </FormLabel>
                         <FormControl>
-                          <Textarea {...field} className="col-span-3" />
-                        </FormControl>
-                      </div>
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="sdt"
-                  render={({ field }) => (
-                    <FormItem>
-                      <div className="grid grid-cols-4 items-center gap-4">
-                        <FormLabel className="text-right">
-                          Số điện thoại
-                        </FormLabel>
-                        <FormControl>
-                          <Input {...field} className="col-span-3" />
+                          <Input
+                            {...field}
+                            type="number"
+                            className="col-span-3"
+                          />
                         </FormControl>
                       </div>
                     </FormItem>
@@ -164,7 +163,7 @@ export default function AddForm({ open, setOpen }) {
                   name="trang_thai"
                   render={({ field }) => (
                     <FormItem>
-                      <div className="grid grid-cols-4 items-center gap-4">
+                      <div className="grid grid-cols-4 items-center gap-x-3">
                         <FormLabel className="text-right">Trạng thái</FormLabel>
                         <FormControl>
                           <Switch
