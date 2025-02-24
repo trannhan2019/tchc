@@ -18,6 +18,7 @@ import {
   FormField,
   FormItem,
   FormLabel,
+  FormMessage,
 } from "@/components/ui/form";
 import { useForm } from "react-hook-form";
 import { Loader2 } from "lucide-react";
@@ -30,18 +31,18 @@ import { useEffect } from "react";
 const initialState = {
   ten_phong_ban: "",
   ma_phong_ban: "",
-  thu_tu_sap_xep: "1",
+  thu_tu_sap_xep: 1,
   trang_thai: true,
 };
 
 const schema = z.object({
   ten_phong_ban: z.string().min(1),
   ma_phong_ban: z.string().min(1),
-  thu_tu_sap_xep: z.string(),
+  thu_tu_sap_xep: z.number(),
   trang_thai: z.boolean(),
 });
 
-export function AddEditForm({ open, setOpen, type, setType, phongBan }) {
+export function AddEditForm({ open, setOpen, type, phongBan }) {
   const queryClient = useQueryClient();
 
   useEffect(() => {
@@ -49,20 +50,16 @@ export function AddEditForm({ open, setOpen, type, setType, phongBan }) {
       form.setValue("ten_phong_ban", phongBan.ten_phong_ban);
       form.setValue("ma_phong_ban", phongBan.ma_phong_ban);
       form.setValue("thu_tu_sap_xep", phongBan.thu_tu_sap_xep);
-      form.setValue("trang_thai", phongBan.trang_thai);
+      form.setValue("trang_thai", Boolean(phongBan.trang_thai));
     } else {
       form.reset();
     }
-  }, [phongBan, type]);
+  }, [phongBan, type, open]);
 
   const form = useForm({
     defaultValues: initialState,
     resolver: zodResolver(schema),
   });
-
-  // const { mutate, isPending } = useMutation({
-  //   mutationFn: (values) => themPhongBan(values),
-  // });
 
   const { mutate, isPending } = useMutation({
     mutationFn: (values) =>
@@ -70,8 +67,6 @@ export function AddEditForm({ open, setOpen, type, setType, phongBan }) {
   });
 
   const onSubmit = async (values) => {
-    // console.log(values);
-
     mutate(values, {
       onSuccess: () => {
         form.reset();
@@ -82,7 +77,7 @@ export function AddEditForm({ open, setOpen, type, setType, phongBan }) {
       },
       onError: (error) => {
         if (error.response.status === 422) {
-          toast.error("Mã phòng ban đã tồn tại !");
+          toast.error("Tên phòng ban đã tồn tại !");
         } else {
           toast.error("Thêm phòng ban thất bại !");
         }
@@ -150,9 +145,13 @@ export function AddEditForm({ open, setOpen, type, setType, phongBan }) {
                           <Input
                             {...field}
                             type="number"
+                            onChange={(e) =>
+                              field.onChange(Number(e.target.value))
+                            }
                             className="col-span-3"
                           />
                         </FormControl>
+                        <FormMessage />
                       </div>
                     </FormItem>
                   )}
@@ -171,6 +170,7 @@ export function AddEditForm({ open, setOpen, type, setType, phongBan }) {
                             onCheckedChange={field.onChange}
                           />
                         </FormControl>
+                        <FormMessage />
                       </div>
                     </FormItem>
                   )}

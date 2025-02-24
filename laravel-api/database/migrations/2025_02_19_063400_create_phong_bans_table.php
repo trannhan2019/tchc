@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('phong_bans', function (Blueprint $table) {
             $table->id();
             $table->string('ten_phong_ban');
-            $table->string('ma_phong_ban')->unique();
+            $table->string('ma_phong_ban');
             //thu_tu_sap_xep
             $table->integer('thu_tu_sap_xep')->default(0);
             //trang_thai

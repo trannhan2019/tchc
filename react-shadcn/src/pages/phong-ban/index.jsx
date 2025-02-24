@@ -24,7 +24,6 @@ export default function PhongBan() {
         open={openAddForm}
         setOpen={setOpenAddForm}
         type={type}
-        setType={setType}
         phongBan={phongBan}
       />
     </div>

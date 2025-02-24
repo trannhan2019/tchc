@@ -23,8 +23,7 @@ class StoreRequest extends FormRequest
     {
         return [
             'ten_phong_ban' => 'required|string|max:255',
-            //ma_phong_ban is required, must be a string, and unique in the phong_bans table
-            'ma_phong_ban' => 'required|string|max:255|unique:phong_bans,ma_phong_ban',
+            'ma_phong_ban' => 'required|string|max:255',
             'thu_tu_sap_xep' => 'required|integer',
             'trang_thai' => 'required|boolean',
         ];

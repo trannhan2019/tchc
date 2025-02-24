@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\PhongBan\StoreRequest;
+use App\Http\Requests\PhongBan\UpdateRequest;
 use App\Http\Resources\PhongBanResource;
 use App\Models\PhongBan;
 use Illuminate\Http\Request;
@@ -57,9 +58,12 @@ class PhongBanController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, PhongBan $phongBan)
+    public function update(UpdateRequest $request, PhongBan $phongBan)
     {
-        //
+        $phongBan->update($request->validated());
+        return response()->json([
+            'message' => 'Cập nhật phòng ban thành công'
+        ]);
     }
 
     /**
