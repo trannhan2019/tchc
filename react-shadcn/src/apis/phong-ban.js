@@ -16,7 +16,7 @@ export const suaPhongBan = async (phongBan, id) => {
   return axios.put(`${phongBanApiUrl}/${id}`, phongBan);
 };
 
-export const deleteCongty = async (id) => {
+export const deletePhongBan = async (id) => {
   await csrf();
   return axios.delete(`${phongBanApiUrl}/${id}`);
 };

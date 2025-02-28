@@ -44,7 +44,7 @@ class PhongBanController extends Controller
      */
     public function show(PhongBan $phongBan)
     {
-        //
+        return new PhongBanResource($phongBan);
     }
 
     /**
@@ -71,6 +71,9 @@ class PhongBanController extends Controller
      */
     public function destroy(PhongBan $phongBan)
     {
-        //
+        $phongBan->delete();
+        return response()->json([
+            'message' => 'Xóa phòng ban thành công'
+        ]);
     }
 }
